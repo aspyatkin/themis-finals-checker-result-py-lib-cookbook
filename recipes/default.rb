@@ -1,9 +1,9 @@
 id = 'themis-finals-checker-result-py-lib'
-h = ::ChefCookbook::Instance::Helper.new(node)
+instance = ::ChefCookbook::Instance::Helper.new(node)
 
 directory node[id]['basedir'] do
-  owner h.instance_user
-  group h.instance_group
+  owner instance.user
+  group instance.group
   mode 0755
   recursive true
   action :create
@@ -12,7 +12,7 @@ end
 url_repository = "https://github.com/#{node[id]['github_repository']}"
 
 if node.chef_environment.start_with? 'development'
-  ssh_private_key h.instance_user
+  ssh_private_key instance.user
   ssh_known_hosts_entry 'github.com'
   url_repository = "git@github.com:#{node[id]['github_repository']}.git"
 end
@@ -20,8 +20,8 @@ end
 git2 node[id]['basedir'] do
   url url_repository
   branch node[id]['revision']
-  user h.instance_user
-  group h.instance_group
+  user instance.user
+  group instance.group
   action :create
 end
 
@@ -46,7 +46,7 @@ if node.chef_environment.start_with? 'development'
       value value
       scope 'local'
       path node[id]['basedir']
-      user h.instance_user
+      user instance.user
       action :set
     end
   end
